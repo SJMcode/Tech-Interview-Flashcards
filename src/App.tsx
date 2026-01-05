@@ -166,18 +166,186 @@ const FlashcardApp = () => {
     CSS: {
       "Box Model": [
         {
-          q: "Explain the CSS Box Model.",
-          a: "Every element is a box consisting of:\n1. Content (The actual text/image)\n2. Padding (Space between content and border)\n3. Border (Line around the padding)\n4. Margin (Space outside the border)\n\nTotal Width = Content + Padding + Border + Margin",
+          q: "What are the 4 parts of the Box Model?",
+          a: "1. Content: The actual element content\n2. Padding: Space inside the border\n3. Border: The line wrap\n4. Margin: Space outside the border",
+          code: ".box {\n  width: 100px; /* Content */\n  padding: 20px;\n  border: 1px solid black;\n  margin: 10px;\n}"
         },
         {
-          q: "What is box-sizing: border-box?",
-          a: "Default (content-box): Width = Content only. Padding/Border add extra width.\n\nborder-box: Width includes Content + Padding + Border.\n\nWhy use it? It makes layout math much easier. If you set width: 50%, it stays 50% even with padding."
+          q: "box-sizing: border-box vs content-box",
+          a: "content-box (default): width = content only.\nborder-box: width = content + padding + border (Easier math).",
+          code: "* {\n  box-sizing: border-box;\n}\n\n.box {\n  width: 100%; /* Includes padding/border */\n}"
         }
       ],
-      "Flexbox & Grid": [
+      "Selectors": [
         {
-          q: "justify-content vs align-items?",
-          a: "justify-content:\n- Aligns along the MAIN axis\n- (Horizontal in row, Vertical in column)\n\nalign-items:\n- Aligns along the CROSS axis\n- (Vertical in row, Horizontal in column)",
+          q: "Specificity hierarchy",
+          a: "1. !important (Highest)\n2. Inline styles\n3. IDs (#header)\n4. Classes/Pseudo-classes (.btn, :hover)\n5. Elements/Pseudo-elements (div, ::before)",
+          code: "/* ID > Class */\n#nav { color: blue; }\n.nav { color: red; } /* Ignored */"
+        },
+        {
+          q: "Combinators: >, +, ~",
+          a: "> : Direct Child\n+ : Adjacent Sibling (Immediately following)\n~ : General Sibling (Anywhere following)",
+          code: "div > p { color: red; } /* Only direct children */\nh1 + p { margin-top: 0; } /* p immediately after h1 */"
+        }
+      ],
+      "Colors": [
+        {
+          q: "Different ways to define color",
+          a: "Keywords (red)\nHex (#ff0000)\nRGB/RGBA (rgb(255, 0, 0))\nHSL/HSLA (hsl(360, 100%, 50%))\nLCH/OKLCH (modern gamuts)",
+          code: "color: coral;\ncolor: #ff5733;\ncolor: rgba(0, 0, 0, 0.5); /* 50% opacity */"
+        },
+        {
+          q: "What is currentColor?",
+          a: "A variable referring to the current element's 'color' property. Useful for SVG fills or borders.",
+          code: ".btn {\n  color: blue;\n  border: 1px solid currentColor; /* Becomes blue */\n}"
+        }
+      ],
+      "Spacing": [
+        {
+          q: "margin vs padding",
+          a: "Margin pushes neighbor elements away.\nPadding pushes internal content away from the border.",
+          code: ".card {\n  margin: 20px; /* Space outside */\n  padding: 20px; /* Space inside */\n}"
+        },
+        {
+          q: "What is margin collapse?",
+          a: "When vertical margins of adjacent block elements combine into a single margin (equal to the largest one), instead of summing up.",
+          code: "h1 { margin-bottom: 20px; }\np { margin-top: 10px; }\n/* Total space = 20px (not 30px) */"
+        }
+      ],
+      "Pseudo Elements & Classes": [
+        {
+          q: "Difference between : and ::",
+          a: ":pseudo-class (State) -> :hover, :focus, :nth-child\n::pseudo-element (Part) -> ::before, ::after, ::placeholder",
+          code: "a:hover { color: purple; }\n\np::first-line {\n  font-weight: bold;\n}"
+        }
+      ],
+      "Border and Outline": [
+        {
+          q: "border vs outline",
+          a: "Border: Takes up space, affects layout.\nOutline: Doesn't take space, sits on top, often used for focus states.",
+          code: ".btn:focus {\n  outline: 2px dashed blue;\n  outline-offset: 2px;\n}"
+        }
+      ],
+      "Flexbox": [
+        {
+          q: "Centering a div with Flexbox",
+          a: "justify-content: center (Horizontal)\nalign-items: center (Vertical)",
+          code: ".parent {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 100vh;\n}"
+        },
+        {
+          q: "flex-grow, flex-shrink, flex-basis",
+          a: "grow: factor to grow if extra space\nshrink: factor to shrink if no space\nbasis: initial size",
+          code: ".item {\n  /* grow | shrink | basis */\n  flex: 1 0 auto;\n}"
+        }
+      ],
+      "Grid": [
+        {
+          q: "fr unit",
+          a: "Fractional unit. Distributes available space proportionally.",
+          code: ".grid {\n  display: grid;\n  grid-template-columns: 1fr 2fr; /* 1/3 and 2/3 */\n}"
+        },
+        {
+          q: "minmax() function",
+          a: "Defines a size range greater than or equal to min and less than or equal to max.",
+          code: "grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));"
+        }
+      ],
+      "Animations": [
+        {
+          q: "transition vs animation",
+          a: "Transition: Smooth change from State A to B (triggered by hover/class).\nAnimation: Complex sequence with keyframes, loops, and no trigger needed.",
+          code: "/* Transition */\n.btn { transition: transform 0.3s; }\n\n/* Animation */\n@keyframes slide {\n  from { left: 0; }\n  to { left: 100px; }\n}\n.box { animation: slide 2s infinite; }"
+        }
+      ],
+      "Overflow & Scroll Snap": [
+        {
+          q: "Scroll Snap usage",
+          a: "Enforces snap points when scrolling (like a carousel).",
+          code: ".container {\n  scroll-snap-type: x mandatory;\n}\n.item {\n  scroll-snap-align: center;\n}"
+        }
+      ],
+      "Text and Typography": [
+        {
+          q: "rem vs em",
+          a: "rem: Relative to Root HTML font-size (usually 16px).\nem: Relative to Parent/Current element's font-size.",
+          code: "html { font-size: 16px; }\np { font-size: 1.5rem; /* 24px */ }\nspan { font-size: 0.5em; /* Half of p (12px) */ }"
+        }
+      ],
+      "Functions": [
+        {
+          q: "Common CSS functions",
+          a: "calc(), var(), url(), rgb(), clamp(), min(), max()",
+          code: "width: calc(100% - 20px);\ncolor: var(--main-bg);\nfont-size: clamp(16px, 5vw, 24px);"
+        }
+      ],
+      "Units": [
+        {
+          q: "vh vs dvh vs svh",
+          a: "vh: Viewport Height (static)\nsvh: Smallest Viewport Height (ignoring browser bars)\ndvh: Dynamic Viewport Height (adjusts as bars appear/disappear)",
+          code: "height: 100dvh; /* Full screen even on mobile */"
+        }
+      ],
+      "Position": [
+        {
+          q: "absolute vs relative vs fixed vs sticky",
+          a: "relative: Offset from self.\nabsolute: Offset from nearest positioned ancestor.\nfixed: Offset from viewport (stays on scroll).\nsticky: Toggles between relative and fixed based on scroll.",
+          code: ".parent { position: relative; }\n.child { \n  position: absolute; \n  top: 0; \n}"
+        }
+      ],
+      "Box Shadow and Filter": [
+        {
+          q: "box-shadow syntax",
+          a: "offset-x | offset-y | blur-radius | spread-radius | color",
+          code: "box-shadow: 10px 10px 5px 0px rgba(0,0,0,0.75);"
+        }
+      ],
+      "Background and Images": [
+        {
+          q: "background-size values",
+          a: "cover: Fills area, crops if needed.\ncontain: Shows full image, leaves empty space if needed.\nauto: Original size.",
+          code: "background-size: cover;\nbackground-position: center;"
+        }
+      ],
+      "Z-index": [
+        {
+          q: "Why isn't z-index working?",
+          a: "Z-index only works on positioned elements (relative, absolute, fixed, sticky) or flex/grid children. It won't work on static (default) position.",
+          code: ".box {\n  position: relative; /* Required! */\n  z-index: 10;\n}"
+        }
+      ],
+      "Media Queries": [
+        {
+          q: "Mobile-first breakpoint example",
+          a: "Define base styles for mobile, then use min-width for larger screens.",
+          code: "/* Mobile */\n.container { width: 100%; }\n\n/* Desktop */\n@media (min-width: 768px) {\n  .container { width: 50%; }\n}"
+        }
+      ],
+      "Browser Support": [
+        {
+          q: "What is a vendor prefix?",
+          a: "Prefixes added by browser engines to support experimental features.",
+          code: "-webkit-transform: rotate(45deg); /* Chrome/Safari */\n-ms-transform: rotate(45deg); /* IE */\ntransform: rotate(45deg); /* Standard */"
+        }
+      ],
+      "CSS Architectures": [
+        {
+          q: "What is BEM?",
+          a: "Block Element Modifier. A naming convention for classes to prevent style leaks.",
+          code: ".block {}\n.block__element {}\n.block--modifier {}\n\n/* Example */\n.card {}\n.card__title {}\n.card--featured {}"
+        }
+      ],
+      "Mobile First Design": [
+        {
+          q: "Why Mobile First?",
+          a: "1. Performance: Loads minimal CSS for mobile.\n2. UX: Prioritizes content for smallest screens.\n3. Complexity: Simpler code (additive) vs Desktop-first (overriding).",
+          code: "/* Default is mobile */\nfont-size: 16px;\n\n/* Additive for desktop */\n@media (min-width: 1024px) {\n  font-size: 20px;\n}"
+        }
+      ],
+      "CSS Preprocessors": [
+        {
+          q: "Sass Features",
+          a: "Nesting, Variables, Mixins, Modules.",
+          code: "$primary: blue;\n\n.card {\n  color: $primary;\n  &:hover {\n    color: darkblue;\n  }\n}"
         }
       ]
     },
@@ -277,6 +445,7 @@ const FlashcardApp = () => {
     setTimeout(nextCard, 300);
   };
 
+  // @ts-ignore
   const resetProgress = () => {
     setMasteredCards({});
     setCurrentCardIndex(0);
@@ -291,6 +460,13 @@ const FlashcardApp = () => {
 
   const getMasteredCount = (main: string, sub: string) => {
     const prefix = `${main}-${sub}-`;
+    // @ts-ignore
+    const category = flashcards[main];
+    // @ts-ignore
+    const subCategory = category?.[sub];
+
+    if (!subCategory) return 0;
+
     return Object.keys(masteredCards).filter(key =>
       key.startsWith(prefix) && masteredCards[key]
     ).length;
@@ -359,7 +535,7 @@ const FlashcardApp = () => {
                         ? 'bg-purple-500/20 text-purple-300'
                         : 'bg-slate-900 border border-slate-800 text-slate-600 group-hover:border-slate-700'
                         }`}>
-                        {getMasteredCount(mainCategory, sub)}/{subCategories[sub].length}
+                        {getMasteredCount(mainCategory, sub)}/{(subCategories as any)[sub].length}
                       </span>
                       {activeSelection.main === mainCategory && activeSelection.sub === sub && (
                         <div className="absolute left-[-17px] top-1/2 -translate-y-1/2 w-1 h-4 bg-purple-500 rounded-r-full" />

@@ -2,6 +2,8 @@
 
 A React-based interactive flashcard application designed to help developers practice for technical interviews using active recall. Organized by main concepts (HTML, CSS, JavaScript, etc.) with detailed sub-categories and interactive code examples.
 
+![App Preview](./public/app-preview.png)
+
 ## 🚀 Live Demo
 Check out the live version here: [https://sjmcode.github.io/Tech-Interview-Flashcards/](https://sjmcode.github.io/Tech-Interview-Flashcards/)
 

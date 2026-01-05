@@ -682,20 +682,30 @@ const FlashcardApp = () => {
       <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
         {showDiscord && (
           <div className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
-            <div className="p-3 bg-slate-800 border-b border-slate-700/50 flex justify-between items-center">
-              <span className="text-xs font-bold text-purple-300 tracking-wider flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
-                COMMUNITY CHAT
-              </span>
-              <button
-                onClick={() => setShowDiscord(false)}
-                className="text-slate-500 hover:text-white transition-colors"
-              >
-                <X size={16} />
-              </button>
+            <div className="p-3 bg-slate-800 border-b border-slate-700/50 flex justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+                <span className="text-xs font-bold text-purple-300 tracking-wider">COMMUNITY CHAT</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://discord.gg/your-invite-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors uppercase"
+                >
+                  Join Server
+                </a>
+                <button
+                  onClick={() => setShowDiscord(false)}
+                  className="text-slate-500 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
             </div>
             <iframe
-              src="https://discord.com/widget?id=1362329821115584616&theme=dark"
+              src="https://e.widgetbot.io/channels/1362329821115584616/1362329821115584616"
               width="350"
               height="500"
               allowTransparency={true}
@@ -718,7 +728,7 @@ const FlashcardApp = () => {
           ) : (
             <>
               <MessageCircle className="text-white group-hover:scale-110 transition-transform" size={28} />
-              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-slate-900 rounded-full animate-bounce" />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-slate-900 rounded-full" />
             </>
           )}
 

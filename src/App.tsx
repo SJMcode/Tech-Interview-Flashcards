@@ -1,111 +1,258 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw, Check, X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Code2, Palette, FileJson, Globe, Atom } from 'lucide-react';
 
 const FlashcardApp = () => {
   const flashcards = {
-    "JavaScript Basics": [
-      {
-        q: "What is a closure?",
-        a: "A closure is when a function 'remembers' variables from its outer scope, even after that outer function has finished executing.\n\nExample:\nfunction outer() {\n  let count = 0;\n  return function inner() {\n    count++;\n    return count;\n  }\n}\nconst counter = outer();\ncounter(); // 1\ncounter(); // 2\n\ninner() still has access to count even though outer() finished."
-      },
-      {
-        q: "Why does this code log 5 five times?\n\nfor (var i = 0; i < 5; i++) {\n  setTimeout(() => console.log(i), 100);\n}",
-        a: "Because var is function-scoped, not block-scoped. All 5 timeouts share the SAME i variable. By the time they execute, the loop has finished and i equals 5.\n\nFix with let (block-scoped):\nfor (let i = 0; i < 5; i++) {\n  setTimeout(() => console.log(i), 100);\n}\n\nOr create a closure:\nfor (var i = 0; i < 5; i++) {\n  ((j) => setTimeout(() => console.log(j), 100))(i);\n}"
-      },
-      {
-        q: "Explain the event loop in one sentence, then detail the process.",
-        a: "Short: The event loop continuously checks if the call stack is empty, and if so, moves tasks from the callback queue to the call stack.\n\nDetailed process:\n1. Execute synchronous code (call stack)\n2. When call stack is empty, check microtask queue (Promises, queueMicrotask)\n3. Execute ALL microtasks\n4. Check macrotask queue (setTimeout, setInterval, I/O)\n5. Execute ONE macrotask\n6. Repeat from step 2\n\nKey: Microtasks have priority over macrotasks!"
-      },
-      {
-        q: "What's the difference between == and ===?",
-        a: "== does type coercion before comparing (loose equality)\n=== compares without type coercion (strict equality)\n\nExamples:\n5 == '5'  // true (string coerced to number)\n5 === '5' // false (different types)\n\n0 == false  // true\n0 === false // false\n\nNull quirk:\nnull == undefined  // true (special rule)\nnull === undefined // false"
-      },
-      {
-        q: "Which array methods mutate the original array?",
-        a: "MUTATING methods (change original):\n- push(), pop()\n- shift(), unshift()\n- splice()\n- sort(), reverse()\n- fill()\n\nNON-MUTATING (return new array):\n- map(), filter(), reduce()\n- slice()\n- concat()\n- spread [...arr]\n\nInterview tip: If asked to avoid mutations, use slice() first:\nconst sorted = [...arr].sort()"
-      }
-    ],
-    "React Fundamentals": [
-      {
-        q: "Why can't you call hooks conditionally?",
-        a: "React relies on the ORDER of hook calls to track state between renders. Each hook call gets a position in an internal array.\n\nIf you call hooks conditionally:\n- The order might change between renders\n- React associates state with the WRONG hook\n- Causes bugs and state corruption\n\nBad:\nif (condition) {\n  useState(0); // Order changes!\n}\n\nGood:\nconst [val, setVal] = useState(0);\nif (condition) {\n  setVal(5); // Use state conditionally\n}"
-      },
-      {
-        q: "What's the stale closure problem in useEffect?",
-        a: "When a function inside useEffect captures a variable's value at render time, but that variable changes later.\n\nExample:\nconst [count, setCount] = useState(0);\n\nuseEffect(() => {\n  const id = setInterval(() => {\n    console.log(count); // ALWAYS logs 0!\n  }, 1000);\n  return () => clearInterval(id);\n}, []); // Empty deps = closure captures initial count\n\nFix: Add count to deps, or use functional update:\nsetCount(c => c + 1)"
-      },
-      {
-        q: "What happens if you forget the key prop in a list?",
-        a: "React can't track which items changed, moved, or were deleted. It falls back to index-based reconciliation.\n\nProblems:\n- Component state gets mixed up when items reorder\n- Poor performance (unnecessary re-renders)\n- Form inputs keep wrong values\n\nBad key: index (breaks when list reorders)\nGood key: unique stable ID from data\n\nitems.map((item, i) => <Item key={i} />) ❌\nitems.map(item => <Item key={item.id} />) ✅"
-      },
-      {
-        q: "When does useEffect run vs useLayoutEffect?",
-        a: "useEffect:\n- Runs AFTER paint (asynchronous)\n- Doesn't block visual updates\n- Use for 99% of side effects (data fetching, subscriptions)\n\nuseLayoutEffect:\n- Runs BEFORE paint (synchronous)\n- Blocks visual updates until it completes\n- Use when you need to measure/modify DOM before user sees it\n\nExample: Tooltip positioning needs useLayoutEffect\n(measure element, position tooltip, THEN paint)"
-      },
-      {
-        q: "Controlled vs uncontrolled components - when to use each?",
-        a: "CONTROLLED: React state is source of truth\n<input value={val} onChange={e => setVal(e.target.value)} />\n\nPros: Validation, formatting, conditional logic\nCons: Re-renders on every keystroke\n\nUNCONTROLLED: DOM is source of truth\nconst ref = useRef();\n<input ref={ref} />\nconst val = ref.current.value;\n\nPros: Better performance, simpler for basic forms\nCons: Harder to validate, less React-like\n\nUse controlled for most cases. Use uncontrolled for performance-critical inputs or file uploads."
-      }
-    ],
-    "HTTP Methods": [
-      {
-        q: "Which HTTP methods are idempotent and why does it matter?",
-        a: "IDEMPOTENT methods: Multiple identical requests have the same effect as one request\n\n- GET ✅ (reading doesn't change state)\n- PUT ✅ (setting to value X multiple times = same result)\n- DELETE ✅ (deleting already-deleted = still deleted)\n- PATCH ❌ (depends on implementation)\n- POST ❌ (creates new resource each time)\n\nWhy it matters:\n- Safe to retry idempotent requests\n- Network can automatically retry on failure\n- Caching strategies differ"
-      },
-      {
-        q: "PUT vs PATCH - when to use each?",
-        a: "PUT: Replace entire resource\n- Send complete object\n- Idempotent\n- PUT /users/123 { name, email, age, ... }\n\nPATCH: Partial update\n- Send only changed fields\n- Not necessarily idempotent\n- PATCH /users/123 { email: 'new@email.com' }\n\nReal world:\n- Use PATCH for partial updates (more efficient)\n- Use PUT when you need to ensure full replacement\n- Many APIs only implement PUT for simplicity"
-      },
-      {
-        q: "What makes an HTTP method 'safe'?",
-        a: "SAFE = Read-only, doesn't modify server state\n\nSafe methods:\n- GET ✅\n- HEAD ✅ (like GET but no body)\n- OPTIONS ✅\n\nNot safe:\n- POST, PUT, PATCH, DELETE ❌\n\nWhy it matters:\n- Browsers can prefetch safe requests\n- Caches can store responses\n- Web crawlers can follow links\n- No CSRF protection needed\n\nNote: All safe methods are also idempotent, but not vice versa (DELETE is idempotent but not safe)"
-      },
-      {
-        q: "What do these status codes mean: 200, 201, 204, 301, 304, 400, 401, 403, 404, 500?",
-        a: "2xx Success:\n200 OK - Request succeeded\n201 Created - Resource created (POST)\n204 No Content - Success but no body (DELETE)\n\n3xx Redirection:\n301 Moved Permanently - Use new URL\n304 Not Modified - Cached version still valid\n\n4xx Client Error:\n400 Bad Request - Invalid syntax\n401 Unauthorized - Need authentication\n403 Forbidden - Authenticated but not allowed\n404 Not Found - Resource doesn't exist\n\n5xx Server Error:\n500 Internal Server Error - Server crashed"
-      },
-      {
-        q: "Explain CORS - why does it exist and how does it work?",
-        a: "CORS = Cross-Origin Resource Sharing\n\nWhy: Same-origin policy blocks JavaScript from reading responses from different origins (prevents malicious sites from stealing data)\n\nHow it works:\n1. Browser sends request with Origin header\n2. Server responds with Access-Control-Allow-Origin\n3. If origins match (or *), browser allows JavaScript to read response\n\nPreflight (for non-simple requests):\n1. Browser sends OPTIONS request first\n2. Server responds with allowed methods/headers\n3. If approved, browser sends actual request\n\nCommon issue: Server returns data but browser blocks it (check console, not network tab)"
-      }
-    ],
-    "Browser Behavior": [
-      {
-        q: "Explain the critical rendering path in order.",
-        a: "1. Parse HTML → DOM tree\n2. Parse CSS → CSSOM tree\n3. Combine DOM + CSSOM → Render tree\n4. Layout: Calculate positions and sizes\n5. Paint: Fill in pixels (text, colors, images)\n6. Composite: Layer together (for transforms, opacity)\n\nKey points:\n- CSS blocks rendering (must build CSSOM first)\n- JavaScript blocks parsing (unless async/defer)\n- Images don't block parsing, just trigger repaint when loaded"
-      },
-      {
-        q: "What triggers a reflow vs a repaint?",
-        a: "REFLOW (expensive - recalculates layout):\n- Changing size/position (width, height, padding, margin)\n- Adding/removing elements\n- Changing font size\n- Window resize\n- Reading layout properties (offsetHeight triggers flush!)\n\nREPAINT (cheaper - no layout change):\n- Color changes\n- Background changes\n- Visibility (not display)\n- Box shadow\n\nNEITHER (cheapest - uses compositor):\n- transform\n- opacity\n\nInterview gold: 'I'd use transform instead of left/top for animations to avoid reflows'"
-      },
-      {
-        q: "Event capturing vs bubbling - what's the difference and when does each happen?",
-        a: "Event flow has 3 phases:\n\n1. CAPTURING (top-down)\n  window → document → body → div → button\n\n2. TARGET\n  Event reaches actual element\n\n3. BUBBLING (bottom-up)\n  button → div → body → document → window\n\nBy default, listeners trigger during BUBBLING.\n\nTo use capturing:\nelement.addEventListener('click', handler, true);\n// or { capture: true }\n\nWhy it matters:\n- Event delegation relies on bubbling\n- stopPropagation() prevents further propagation\n- Some events don't bubble (focus, blur, load)"
-      },
-      {
-        q: "localStorage vs sessionStorage vs cookies - when to use each?",
-        a: "localStorage:\n- Persists forever (until cleared)\n- 5-10MB storage\n- Not sent to server\n- Use for: User preferences, cached data\n\nsessionStorage:\n- Cleared when tab closes\n- Same storage limit\n- Not sent to server\n- Use for: Form data, temporary state\n\ncookies:\n- Can set expiration\n- 4KB limit\n- SENT WITH EVERY REQUEST (bandwidth cost!)\n- Use for: Authentication tokens (httpOnly + secure)\n\nCommon mistake: Using cookies for large data (use localStorage instead)"
-      },
-      {
-        q: "When does DOMContentLoaded fire vs load?",
-        a: "DOMContentLoaded:\n- Fires when HTML is parsed and DOM is built\n- CSS and images DON'T need to load\n- JavaScript blocks it (unless async/defer)\n- Use for: Initializing app, attaching handlers\n\nload (window.onload):\n- Fires when EVERYTHING loaded (images, CSS, scripts)\n- Much later than DOMContentLoaded\n- Use for: Analytics, measuring page fully loaded\n\nModern approach:\n- Use defer on scripts (runs after DOM, before DOMContentLoaded)\n- Or put scripts at end of body\n\nQuick test:\ndocument.addEventListener('DOMContentLoaded', ...) // Fast\nwindow.addEventListener('load', ...) // Slow"
-      }
-    ]
+    HTML: {
+      "Introduction": [
+        {
+          q: "What is HTML?",
+          a: "HTML (HyperText Markup Language) is the standard markup language used to create web pages. It provides the structure and skeleton of a website.",
+          code: "<!DOCTYPE html>\n<html>\n  <head>\n    <title>Page Title</title>\n  </head>\n  <body>\n    <h1>My First Heading</h1>\n    <p>My first paragraph.</p>\n  </body>\n</html>"
+        },
+        {
+          q: "HTML vs CSS vs JavaScript",
+          a: "- HTML: Structure & Content (Bones)\n- CSS: Presentation & Style (Skin/Clothing)\n- JavaScript: Interactivity & Logic (Muscles/Brain)",
+          code: "<!-- HTML -->\n<button class=\"btn\">Click me</button>\n\n/* CSS */\n.btn { background: blue; color: white; }\n\n// JS\nconst btn = document.querySelector('.btn');\nbtn.addEventListener('click', () => alert('Hello!'));"
+        },
+        {
+          q: "Identify the document type declaration.",
+          a: "<!DOCTYPE html>\nIt tells the browser that this is an HTML5 document. It must be the very first line of code.",
+          code: "<!DOCTYPE html>"
+        }
+      ],
+      "Basics & Structure": [
+        {
+          q: "Block-level vs Inline elements",
+          a: "Block-level:\n- Starts on a new line\n- Takes full width available\n- Examples: <div>, <p>, <h1>, <section>\n\nInline:\n- Stays on the same line\n- Takes only necessary width\n- Examples: <span>, <a>, <img>, <strong>",
+          code: "<!-- Block -->\n<div>I am a block</div>\n<p>I am also a block</p>\n\n<!-- Inline -->\n<span>I am inline</span>\n<a href=\"#\">I am also inline</a>"
+        },
+        {
+          q: "What are 'void' or 'empty' elements?",
+          a: "Elements that don't have a closing tag because they don't hold content.\n\nExamples:\n<br>, <hr>, <img>, <input>, <link>, <meta>",
+          code: "<br /> <!-- Break -->\n<hr /> <!-- Horizontal Rule -->\n<img src=\"image.jpg\" />\n<input type=\"text\" />"
+        }
+      ],
+      "Text & Formatting": [
+        {
+          q: "<strong> vs <b> and <em> vs <i>",
+          a: "<strong> & <em> are SEMANTIC:\n- <strong>: Important text (usually bold)\n- <em>: Emphasized text (usually italic)\n\n<b> & <i> are PRESENTATIONAL:\n- <b>: Bold text (no extra meaning)\n- <i>: Italic text (no extra meaning)\n\nAlways prefer semantic tags for accessibility.",
+          code: "<p>\n  <strong>Warning:</strong> The stove is hot.\n  <em>Please be careful.</em>\n</p>"
+        },
+        {
+          q: "How to display code snippets?",
+          a: "Use <code> for inline code.\nUse <pre> for blocks of preformatted text (preserves whitespace).\n\nCombination:\n<pre><code>\n  const x = 10;\n</code></pre>",
+          code: "<p>The <code>console.log()</code> function is useful.</p>\n\n<pre>\n  <code>\nfunction hello() {\n  return \"World\";\n}\n  </code>\n</pre>"
+        }
+      ],
+      "Lists & Links": [
+        {
+          q: "Types of lists in HTML",
+          a: "1. Unordered List (<ul>) -> Bullet points\n2. Ordered List (<ol>) -> Numbers/Letters\n3. Description List (<dl>) -> Terms (<dt>) and Descriptions (<dd>)",
+          code: "<ul>\n  <li>Item 1</li>\n</ul>\n\n<ol>\n  <li>First</li>\n</ol>\n\n<dl>\n  <dt>HTML</dt>\n  <dd>Markup Language</dd>\n</dl>"
+        },
+        {
+          q: "Absolute vs Relative URLs",
+          a: "Absolute: Full web address (e.g., https://example.com/page)\nRelative: Path relative to current file (e.g., ./about.html or /images/logo.png)",
+          code: "<a href=\"https://google.com\">Absolute</a>\n<a href=\"/contact\">Relative Root</a>\n<a href=\"../images/logo.png\">Relative Parent</a>"
+        }
+      ],
+      "Multimedia": [
+        {
+          q: "Required attributes for <img>",
+          a: "1. src (Source): Path to image\n2. alt (Alternative Text): Description for accessibility & SEO if image fails to load",
+          code: "<img src=\"cat.jpg\" alt=\"A cute orange tabby cat sleeping\" />"
+        },
+        {
+          q: "How to make images responsive?",
+          a: "1. Use CSS: max-width: 100%; height: auto;\n2. Use 'srcset' and 'sizes' attributes to serve different files based on screen width.\n3. Use <picture> element for art direction (cropping/changing image completely).",
+          code: "<img \n  src=\"small.jpg\" \n  srcset=\"small.jpg 500w, medium.jpg 1000w, large.jpg 1500w\" \n  alt=\"Responsive\" \n/>"
+        }
+      ],
+      "Tables": [
+        {
+          q: "Table structure elements",
+          a: "<table>: Wrapper\n<thead>: Header rows\n<tbody>: Body rows\n<tfoot>: Footer rows\n<tr>: Table Row\n<th>: Table Header Cell (Bold, Centered)\n<td>: Table Data Cell",
+          code: "<table>\n  <thead>\n    <tr>\n      <th>Name</th>\n      <th>Age</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td>Alice</td>\n      <td>25</td>\n    </tr>\n  </tbody>\n</table>"
+        },
+        {
+          q: "How to merge cells?",
+          a: "Use 'colspan' to merge columns horizontally.\nUse 'rowspan' to merge rows vertically.\n\n<td colspan='2'>Merges 2 cols</td>",
+          code: "<table>\n  <tr>\n    <td colspan=\"2\">Spans 2 columns</td>\n  </tr>\n  <tr>\n    <td rowspan=\"2\">Spans 2 rows</td>\n    <td>Cell</td>\n  </tr>\n</table>"
+        }
+      ],
+      "Forms": [
+        {
+          q: "Input types examples",
+          a: "- text, password, email\n- number, range\n- checkbox (multiple), radio (single choice)\n- date, time, file, color\n- hidden",
+          code: "<input type=\"email\" placeholder=\"Enter email\" />\n<input type=\"password\" />\n<input type=\"checkbox\" id=\"agree\" />\n<input type=\"date\" />"
+        },
+        {
+          q: "Difference between <label> implicit vs explicit",
+          a: "Explicit (Recommended):\n<label for='email'>Email</label>\n<input id='email' ... />\n\nImplicit (Wrapping):\n<label>Email <input ... /></label>",
+          code: "<!-- Explicit connection (Best for A11y) -->\n<label for=\"username\">Username:</label>\n<input type=\"text\" id=\"username\" name=\"username\" />"
+        }
+      ],
+      "Semantic HTML": [
+        {
+          q: "Why use Semantic HTML?",
+          a: "1. Accessibility: Screen readers use it to navigate (e.g. 'Jump to Navigation').\n2. SEO: Helps search engines understand content importance.\n3. Maintainability: Easier for developers to read code.",
+          code: "<!-- Bad -->\n<div class=\"header\">Header</div>\n<div class=\"nav\">Menu</div>\n\n<!-- Good -->\n<header>Header</header>\n<nav>Menu</nav>"
+        },
+        {
+          q: "Common semantic landmarks",
+          a: "<header>, <nav>, <main>, <footer>, <aside> (sidebar), <section>, <article>",
+          code: "<body>\n  <header>...</header>\n  <main>\n    <article>...</article>\n    <aside>...</aside>\n  </main>\n  <footer>...</footer>\n</body>"
+        }
+      ],
+      "Global Attributes": [
+        {
+          q: "id vs class",
+          a: "id:\n- Unique identifier (ONE per page)\n- Used for anchor links (#section) & specific JS hooks\n\nclass:\n- Reusable identifier (MANY per page)\n- Used for styling multiple elements",
+          code: "<div id=\"main-content\">Unique</div>\n\n<div class=\"card\">Reusable</div>\n<div class=\"card\">Reusable</div>"
+        },
+        {
+          q: "What are data-* attributes?",
+          a: "Allow you to store custom data private to the page or application.\n\n<div data-user-id='123' data-role='admin'>\n\nAccess in JS: element.dataset.userId",
+          code: "<article data-id=\"101\" data-author=\"alice\">\n  ...\n</article>\n\n// JS\nconst article = document.querySelector('article');\nconsole.log(article.dataset.author); // \"alice\""
+        }
+      ],
+      "HTML5 APIs": [
+        {
+          q: "localStorage vs sessionStorage",
+          a: "localStorage: Persists until explicitly deleted. Shared across tabs/windows.\n\nsessionStorage: Cleared when tab/session closes. Specific to that tab.",
+          code: "// Local (Forever)\nlocalStorage.setItem('theme', 'dark');\n\n// Session (Temporary)\nsessionStorage.setItem('tempToken', '123');"
+        },
+        {
+          q: "How to get user location?",
+          a: "navigator.geolocation.getCurrentPosition(success, error)\n\nRequires user permission (HTTPS only).",
+          code: "navigator.geolocation.getCurrentPosition(\n  (pos) => console.log(pos.coords.latitude),\n  (err) => console.error(err)\n);"
+        }
+      ],
+      "Graphics": [
+        {
+          q: "Canvas vs SVG",
+          a: "Canvas:\n- Raster (pixels)\n- JS-drawn\n- Good for games, high frequency updates\n- Poor scalability\n\nSVG:\n- Vector (xml)\n- DOM elements\n- Good for logos, icons, charts\n- Perfect scalability",
+          code: "<!-- SVG -->\n<svg width=\"100\" height=\"100\">\n  <circle cx=\"50\" cy=\"50\" r=\"40\" fill=\"red\" />\n</svg>\n\n<!-- Canvas -->\n<canvas id=\"myCanvas\"></canvas>\n<script>\n  const ctx = document.getElementById('myCanvas').getContext('2d');\n  ctx.fillRect(0, 0, 100, 100);\n</script>"
+        }
+      ],
+      "Accessibility": [
+        {
+          q: "What is ARIA?",
+          a: "Accessible Rich Internet Applications.\nAttributes (role, aria-label, aria-hidden) that supplement HTML to provide extra info to screen readers when native semantics fall short.",
+          code: "<button aria-label=\"Close Menu\" onclick=\"closeMenu()\">\n  X\n</button>\n\n<div role=\"alert\">Error occurred</div>"
+        },
+        {
+          q: "Alt text best practices",
+          a: "- Be descriptive but concise.\n- Don't say 'image of...'.\n- Leave empty (alt='') if image is purely decorative.",
+          code: "<!-- Good -->\n<img src=\"chart.png\" alt=\"Sales graph showing 20% growth in Q3\" />\n\n<!-- Decorative -->\n<img src=\"divider.png\" alt=\"\" />"
+        }
+      ],
+      "SEO": [
+        {
+          q: "Important meta tags",
+          a: "1. <title>: Critical for SEO & user tabs.\n2. description: Summary for search snippets.\n3. viewport: Essential for mobile responsiveness.\n4. charset: Character encoding (UTF-8).",
+          code: "<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"A free flashcard app for interviews\">\n  <title>Flashcards</title>\n</head>"
+        }
+      ],
+      "Best Practices": [
+        {
+          q: "Performance tips",
+          a: "- Use semantic HTML.\n- Lazy load images (loading='lazy').\n- Defer scripts (<script defer>).\n- Minimize DOM depth.\n- Preload critical assets.",
+          code: "<img src=\"heavy.jpg\" loading=\"lazy\" alt=\"...\" />\n<script src=\"app.js\" defer></script>\n<link rel=\"preload\" href=\"font.woff2\" as=\"font\" />"
+        }
+      ]
+    },
+    CSS: {
+      "Box Model": [
+        {
+          q: "Explain the CSS Box Model.",
+          a: "Every element is a box consisting of:\n1. Content (The actual text/image)\n2. Padding (Space between content and border)\n3. Border (Line around the padding)\n4. Margin (Space outside the border)\n\nTotal Width = Content + Padding + Border + Margin",
+        },
+        {
+          q: "What is box-sizing: border-box?",
+          a: "Default (content-box): Width = Content only. Padding/Border add extra width.\n\nborder-box: Width includes Content + Padding + Border.\n\nWhy use it? It makes layout math much easier. If you set width: 50%, it stays 50% even with padding."
+        }
+      ],
+      "Flexbox & Grid": [
+        {
+          q: "justify-content vs align-items?",
+          a: "justify-content:\n- Aligns along the MAIN axis\n- (Horizontal in row, Vertical in column)\n\nalign-items:\n- Aligns along the CROSS axis\n- (Vertical in row, Horizontal in column)",
+        }
+      ]
+    },
+    JavaScript: {
+      "Core Concepts": [
+        {
+          q: "What is a closure?",
+          a: "A closure is when a function 'remembers' variables from its outer scope, even after that outer function has finished executing.\n\nExample:\nfunction outer() {\n  let count = 0;\n  return function inner() {\n    count++;\n    return count;\n  }\n}\n"
+        },
+        {
+          q: "Event loop basics",
+          a: "1. Call Stack (Sync code)\n2. Microtasks (Promises)\n3. Macrotasks (setTimeout)\n\nThe loop waits for Stack to be empty, then runs all Microtasks, then runs ONE Macrotask."
+        },
+        {
+          q: "== vs ===",
+          a: "== (Loose Equality): Performs type coercion (e.g., '5' == 5 is true).\n=== (Strict Equality): Checks value AND type (e.g., '5' === 5 is false).\n\nAlways use === to avoid bugs."
+        }
+      ]
+    },
+    Browser: {
+      "Networking": [
+        {
+          q: "GET vs POST",
+          a: "GET:\n- Requests data\n- Parameters in URL\n- Cachable\n- Idempotent\n\nPOST:\n- Submits data\n- Body contains data\n- Not cached by default\n- Not idempotent"
+        },
+        {
+          q: "CORS",
+          a: "Cross-Origin Resource Sharing.\nSecurity mechanism that blocks web pages from making requests to a different domain than the one that served the web page, unless the server explicitly allows it."
+        }
+      ],
+      "Rendering": [
+        {
+          q: "Reflow vs Repaint",
+          a: "Reflow (Layout): Calculating position/geometry. Expensive.\nRepaint: Changing visual styles (color, visibility). Cheaper.\n\nChanging width -> Reflow\nChanging background-color -> Repaint"
+        }
+      ]
+    },
+    React: {
+      "Fundamentals": [
+        {
+          q: "useState vs useRef",
+          a: "useState:\n- Triggers re-render when updated\n- Async updates\n\nuseRef:\n- Does NOT trigger re-render\n- Synchronous updates\n- Good for accessing DOM elements or storing mutable values that don't affect UI"
+        },
+        {
+          q: "useEffect dependency array",
+          a: "[] -> Runs once on mount\n[prop] -> Runs on mount + when prop changes\nNo array -> Runs on EVERY render (dangerous)\n\nReturn function -> Cleanup (runs before unmount or next effect)"
+        }
+      ]
+    }
   };
 
-  const [currentCategory, setCurrentCategory] = useState("JavaScript Basics");
+  const [activeSelection, setActiveSelection] = useState({
+    main: "JavaScript",
+    sub: "Core Concepts"
+  });
+
+  // State for expanded categories in sidebar
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>({
+    "JavaScript": true
+  });
+
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
-  const [masteredCards, setMasteredCards] = useState({});
+  const [showCode, setShowCode] = useState(false);
+  const [masteredCards, setMasteredCards] = useState<Record<string, boolean>>({});
 
-  const categories = Object.keys(flashcards);
-  const currentCards = flashcards[currentCategory];
-  const currentCard = currentCards[currentCardIndex];
+  // @ts-ignore
+  const currentCards = flashcards[activeSelection.main]?.[activeSelection.sub] || [];
+  const currentCard = currentCards[currentCardIndex] || { q: '', a: '', code: '' };
 
   const nextCard = () => {
     if (currentCardIndex < currentCards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
       setShowAnswer(false);
+      setShowCode(false);
     }
   };
 
@@ -113,11 +260,19 @@ const FlashcardApp = () => {
     if (currentCardIndex > 0) {
       setCurrentCardIndex(currentCardIndex - 1);
       setShowAnswer(false);
+      setShowCode(false);
     }
   };
 
-  const markMastered = (mastered) => {
-    const key = `${currentCategory}-${currentCardIndex}`;
+  const toggleCategory = (category: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [category]: !prev[category]
+    }));
+  };
+
+  const markMastered = (mastered: boolean) => {
+    const key = `${activeSelection.main}-${activeSelection.sub}-${currentCardIndex}`;
     setMasteredCards({ ...masteredCards, [key]: mastered });
     setTimeout(nextCard, 300);
   };
@@ -126,152 +281,223 @@ const FlashcardApp = () => {
     setMasteredCards({});
     setCurrentCardIndex(0);
     setShowAnswer(false);
+    setShowCode(false);
   };
 
   const getCurrentCardStatus = () => {
-    const key = `${currentCategory}-${currentCardIndex}`;
+    const key = `${activeSelection.main}-${activeSelection.sub}-${currentCardIndex}`;
     return masteredCards[key];
   };
 
-  const getMasteredCount = () => {
+  const getMasteredCount = (main: string, sub: string) => {
+    const prefix = `${main}-${sub}-`;
     return Object.keys(masteredCards).filter(key =>
-      key.startsWith(currentCategory) && masteredCards[key]
+      key.startsWith(prefix) && masteredCards[key]
     ).length;
   };
 
+  const getIcon = (category: string) => {
+    switch (category) {
+      case 'HTML': return <Code2 size={18} />;
+      case 'CSS': return <Palette size={18} />;
+      case 'JavaScript': return <FileJson size={18} />;
+      case 'Browser': return <Globe size={18} />;
+      case 'React': return <Atom size={18} />;
+      default: return <Code2 size={18} />;
+    }
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4">
-      <div className="max-w-4xl mx-auto">
-        {/* Header */}
-        <div className="text-center mb-8 pt-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Tech Interview Flashcards</h1>
-          <p className="text-purple-300">Active recall for concepts that actually stick</p>
+    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex text-slate-100 font-sans">
+      {/* Sidebar */}
+      <div className="w-72 bg-slate-950/50 border-r border-slate-700/50 flex flex-col shrink-0 backdrop-blur-sm">
+        <div className="p-6 border-b border-slate-800">
+          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
+            <Code2 className="text-purple-400" />
+            Concepts
+          </h2>
         </div>
 
-        {/* Category Selector */}
-        <div className="mb-6 flex flex-wrap gap-2 justify-center">
-          {categories.map(cat => (
-            <button
-              key={cat}
-              onClick={() => {
-                setCurrentCategory(cat);
-                setCurrentCardIndex(0);
-                setShowAnswer(false);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition-all ${currentCategory === cat
-                ? 'bg-purple-500 text-white shadow-lg'
-                : 'bg-slate-800 text-slate-300 hover:bg-slate-700'
-                }`}
-            >
-              {cat}
-              <span className="ml-2 text-xs opacity-75">
-                {getMasteredCount()}/{flashcards[cat].length}
-              </span>
-            </button>
-          ))}
-        </div>
+        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+          {Object.entries(flashcards).map(([mainCategory, subCategories]) => (
+            <div key={mainCategory} className="space-y-1">
+              <button
+                onClick={() => toggleCategory(mainCategory)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors hover:bg-slate-800/50 group ${expandedCategories[mainCategory] ? 'text-purple-300' : 'text-slate-400'
+                  }`}
+              >
+                <div className="flex items-center gap-3 font-semibold text-sm">
+                  <div className={`transition-colors ${expandedCategories[mainCategory] ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-400'}`}>
+                    {getIcon(mainCategory)}
+                  </div>
+                  {mainCategory}
+                </div>
+                <ChevronRight
+                  size={16}
+                  className={`transition-transform duration-200 ${expandedCategories[mainCategory] ? 'rotate-90' : ''}`}
+                />
+              </button>
 
-        {/* Progress */}
-        <div className="mb-4 text-center text-purple-300">
-          Card {currentCardIndex + 1} of {currentCards.length}
-        </div>
-
-        {/* Flashcard */}
-        <div
-          className="bg-slate-800 rounded-2xl shadow-2xl p-8 min-h-[400px] mb-6 cursor-pointer relative overflow-hidden"
-          onClick={() => setShowAnswer(!showAnswer)}
-        >
-          {/* Status indicator */}
-          {getCurrentCardStatus() !== undefined && (
-            <div className="absolute top-4 right-4">
-              {getCurrentCardStatus() ? (
-                <Check className="text-green-400" size={24} />
-              ) : (
-                <X className="text-red-400" size={24} />
+              {expandedCategories[mainCategory] && (
+                <div className="flex flex-col gap-1 pl-4 border-l border-slate-800 ml-5 py-1">
+                  {Object.keys(subCategories).map(sub => (
+                    <button
+                      key={sub}
+                      onClick={() => {
+                        setActiveSelection({ main: mainCategory, sub });
+                        setCurrentCardIndex(0);
+                        setShowAnswer(false);
+                        setShowCode(false);
+                      }}
+                      className={`px-3 py-2 rounded-md text-sm font-medium text-left transition-all flex justify-between items-center group relative ${activeSelection.main === mainCategory && activeSelection.sub === sub
+                        ? 'bg-purple-600/20 text-purple-300'
+                        : 'text-slate-500 hover:text-slate-300 hover:bg-slate-800/30'
+                        }`}
+                    >
+                      <span>{sub}</span>
+                      <span className={`text-[10px] px-1.5 py-0.5 rounded-full transition-colors ${activeSelection.main === mainCategory && activeSelection.sub === sub
+                        ? 'bg-purple-500/20 text-purple-300'
+                        : 'bg-slate-900 border border-slate-800 text-slate-600 group-hover:border-slate-700'
+                        }`}>
+                        {getMasteredCount(mainCategory, sub)}/{subCategories[sub].length}
+                      </span>
+                      {activeSelection.main === mainCategory && activeSelection.sub === sub && (
+                        <div className="absolute left-[-17px] top-1/2 -translate-y-1/2 w-1 h-4 bg-purple-500 rounded-r-full" />
+                      )}
+                    </button>
+                  ))}
+                </div>
               )}
             </div>
-          )}
-
-          <div className="text-sm text-purple-400 mb-4 font-medium">
-            {showAnswer ? 'ANSWER' : 'QUESTION'}
-          </div>
-
-          <div className="text-white text-lg leading-relaxed whitespace-pre-wrap">
-            {showAnswer ? currentCard.a : currentCard.q}
-          </div>
-
-          <div className="absolute bottom-4 right-4 text-slate-600 text-sm">
-            Click to flip
-          </div>
+          ))}
         </div>
+      </div>
 
-        {/* Controls */}
-        <div className="flex gap-4 items-center justify-center mb-4">
-          <button
-            onClick={prevCard}
-            disabled={currentCardIndex === 0}
-            className="p-3 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 rounded-lg text-white transition-colors"
-          >
-            <ChevronLeft size={24} />
-          </button>
+      {/* Main Content */}
+      <div className="flex-1 p-8 overflow-y-auto">
+        <div className="max-w-4xl mx-auto">
+          {/* Header */}
+          <div className="text-center mb-12">
+            <h1 className="text-4xl font-bold text-white mb-2">Tech Interview Flashcards</h1>
+            <p className="text-purple-300">Active recall for concepts that actually stick</p>
+          </div>
 
-          <button
+          {/* Breadcrumbs */}
+          <div className="text-center mb-2 text-sm text-slate-400 font-medium">
+            <span className="text-slate-500">{activeSelection.main}</span>
+            <ChevronRight className="inline mx-1 w-3 h-3" />
+            <span className="text-purple-300">{activeSelection.sub}</span>
+          </div>
+
+          {/* Progress */}
+          <div className="mb-6 text-center text-slate-500 text-xs tracking-widest uppercase">
+            Card {currentCardIndex + 1} of {currentCards.length}
+          </div>
+
+          {/* Flashcard */}
+          <div
+            className="bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl shadow-2xl p-10 min-h-[400px] mb-8 cursor-pointer relative overflow-hidden group transition-all hover:bg-slate-800"
             onClick={() => setShowAnswer(!showAnswer)}
-            className="px-6 py-3 bg-purple-600 hover:bg-purple-500 rounded-lg text-white font-medium transition-colors"
           >
-            {showAnswer ? 'Hide Answer' : 'Show Answer'}
-          </button>
+            {/* Status indicator */}
+            {getCurrentCardStatus() !== undefined && (
+              <div className="absolute top-6 right-6">
+                {getCurrentCardStatus() ? (
+                  <div className="bg-green-500/10 p-2 rounded-full border border-green-500/20">
+                    <Check className="text-green-400" size={20} />
+                  </div>
+                ) : (
+                  <div className="bg-red-500/10 p-2 rounded-full border border-red-500/20">
+                    <X className="text-red-400" size={20} />
+                  </div>
+                )}
+              </div>
+            )}
 
-          <button
-            onClick={nextCard}
-            disabled={currentCardIndex === currentCards.length - 1}
-            className="p-3 bg-slate-700 hover:bg-slate-600 disabled:bg-slate-800 disabled:opacity-50 rounded-lg text-white transition-colors"
-          >
-            <ChevronRight size={24} />
-          </button>
-        </div>
+            <div className="text-xs font-bold tracking-widest text-purple-400 mb-6 uppercase">
+              {showAnswer ? 'Answer' : 'Question'}
+            </div>
 
-        {/* Mastery buttons */}
-        {showAnswer && (
-          <div className="flex gap-4 justify-center mb-4">
+            <div className="text-white text-xl leading-relaxed whitespace-pre-wrap font-light">
+              {showAnswer ? currentCard.a : currentCard.q}
+            </div>
+
+            {showAnswer && currentCard.code && (
+              <div className="mt-4 border-t border-slate-700/50 pt-4" onClick={e => e.stopPropagation()}>
+                <button
+                  onClick={() => setShowCode(!showCode)}
+                  className="text-xs font-bold text-purple-400 flex items-center gap-1 hover:text-purple-300 transition-colors"
+                >
+                  <Code2 size={12} />
+                  {showCode ? 'Hide Code' : 'Show Code Example'}
+                </button>
+                {showCode && (
+                  <pre className="mt-2 bg-slate-900/80 p-4 rounded-lg text-xs font-mono text-slate-300 overflow-x-auto border border-slate-700/50 shadow-inner">
+                    <code>{currentCard.code}</code>
+                  </pre>
+                )}
+              </div>
+            )}
+
+            <div className="absolute bottom-6 right-6 text-slate-600 text-xs flex items-center gap-1 group-hover:text-purple-400 transition-colors">
+              Click to flip <RotateCcw size={12} />
+            </div>
+          </div>
+
+          {/* Controls */}
+          <div className="flex gap-6 items-center justify-center mb-8">
             <button
-              onClick={() => markMastered(false)}
-              className="px-6 py-2 bg-red-600 hover:bg-red-500 rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+              onClick={prevCard}
+              disabled={currentCardIndex === 0}
+              className="p-4 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:opacity-30 rounded-xl text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
             >
-              <X size={20} />
+              <ChevronLeft size={24} />
+            </button>
+
+            <button
+              onClick={() => setShowAnswer(!showAnswer)}
+              className="px-8 py-4 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-bold tracking-wide transition-all shadow-lg shadow-purple-900/50 hover:shadow-purple-700/50 hover:-translate-y-0.5 min-w-[160px]"
+            >
+              {showAnswer ? 'Hide' : 'Reveal'}
+            </button>
+
+            <button
+              onClick={nextCard}
+              disabled={currentCardIndex === currentCards.length - 1}
+              className="p-4 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:opacity-30 rounded-xl text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+            >
+              <ChevronRight size={24} />
+            </button>
+          </div>
+
+          {/* Mastery buttons */}
+          <div className={`flex gap-4 justify-center transition-all duration-500 overflow-hidden ${showAnswer ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0'}`}>
+            <button
+              onClick={(e) => { e.stopPropagation(); markMastered(false); }}
+              className="px-6 py-2.5 bg-slate-800 border border-red-500/30 hover:bg-red-950/30 hover:border-red-500 text-red-200 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
+            >
+              <X size={16} />
               Need Practice
             </button>
             <button
-              onClick={() => markMastered(true)}
-              className="px-6 py-2 bg-green-600 hover:bg-green-500 rounded-lg text-white font-medium transition-colors flex items-center gap-2"
+              onClick={(e) => { e.stopPropagation(); markMastered(true); }}
+              className="px-6 py-2.5 bg-slate-800 border border-green-500/30 hover:bg-green-950/30 hover:border-green-500 text-green-200 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
             >
-              <Check size={20} />
-              Got It!
+              <Check size={16} />
+              Got It
             </button>
           </div>
-        )}
 
-        {/* Reset button */}
-        <div className="text-center">
-          <button
-            onClick={resetProgress}
-            className="text-purple-400 hover:text-purple-300 text-sm flex items-center gap-2 mx-auto transition-colors"
-          >
-            <RotateCcw size={16} />
-            Reset Progress
-          </button>
-        </div>
+          {/* Tips */}
+          <div className="mt-12 border-t border-slate-800 pt-8">
+            <div className="bg-slate-800/50 rounded-xl p-6 text-slate-400 text-sm leading-relaxed max-w-2xl mx-auto">
+              <p className="flex gap-2 items-start">
+                <span className="text-purple-400 font-bold shrink-0">💡 Pro Tip:</span>
+                Focus on 'Why' and 'How' rather than just memorizing syntax. Interviewers look for deep understanding of concepts like the Event Loop or Closures.
+              </p>
+            </div>
+          </div>
 
-        {/* Tips */}
-        <div className="mt-8 bg-slate-800 rounded-lg p-6 text-slate-300">
-          <h3 className="text-purple-400 font-bold mb-3">How to Use These Cards</h3>
-          <ul className="space-y-2 text-sm">
-            <li>• Try to answer before flipping - that's where the learning happens</li>
-            <li>• If you struggled, mark "Need Practice" even if you eventually got it</li>
-            <li>• Review "Need Practice" cards more frequently</li>
-            <li>• Connect concepts across categories - interviewers love that</li>
-            <li>• Try explaining answers out loud to simulate interview pressure</li>
-          </ul>
         </div>
       </div>
     </div>

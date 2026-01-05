@@ -1,19 +1,25 @@
 # Tech Interview Flashcards
 
-A React-based interactive flashcard application designed to help developers practice for technical interviews using active recall.
+A React-based interactive flashcard application designed to help developers practice for technical interviews using active recall. Organized by main concepts (HTML, CSS, JavaScript, etc.) with detailed sub-categories and interactive code examples.
 
-![App Screenshot](https://via.placeholder.com/800x400?text=Tech+Interview+Flashcards+Preview)
+## 🚀 Live Demo
+Check out the live version here: [https://sjmcode.github.io/Tech-Interview-Flashcards/](https://sjmcode.github.io/Tech-Interview-Flashcards/)
 
-## Features
+## ✨ Features
 
--   **Topic Categories**: Choose from JavaScript Basics, React Fundamentals, HTTP Methods, and more.
--   **Active Recall**: Flip cards to reveal answers and test your knowledge.
--   **Progress Tracking**: Mark cards as "Got It" or "Need Practice" to track mastery per category.
--   **Responsive Design**: Built with Tailwind CSS for a beautiful experience on any device.
+-   **Hierarchical Navigation**: Detailed sidebar with expandable categories (HTML, CSS, JavaScript, Browser, React).
+-   **Interactive Code Snippets**: Reveal relevant code examples with a "Show Code" toggle.
+-   **Comprehensive Content**: Over 40+ sub-topics covering everything from Semantic HTML to CSS Preprocessors.
+-   **Active Recall Tracking**: Mark cards as "Got It" or "Need Practice" to track progress per topic.
+-   **Glassmorphism Branding**: A sleek, modern UI built with Tailwind CSS.
 
-## Installation
+## 🛠️ Installation & Local Development
 
-1.  **Clone the repository** (if applicable) or navigate to the project directory.
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/SJMcode/Tech-Interview-Flashcards.git
+    cd Tech-Interview-Flashcards
+    ```
 
 2.  **Install dependencies**:
     ```bash
@@ -26,20 +32,33 @@ A React-based interactive flashcard application designed to help developers prac
     ```
 
 4.  **Open the app**:
-    Click the URL shown in the terminal (usually `http://localhost:5173` or similar).
+    The app will be available at `http://localhost:5173/Tech-Interview-Flashcards/` (or similar).
 
-## How to Use
+## 🚢 Deployment
 
-1.  **Select a Topic**: Click a category at the top (e.g., "JavaScript Basics").
-2.  **Quiz Yourself**: Read the question, answer it mentally, then click the card to flip it.
-3.  **Rate Mastery**:
-    -   Click **Need Practice** (Red X) if you missed it.
-    -   Click **Got It!** (Green Check) if you knew the answer.
-4.  **Reset**: Use the "Reset Progress" button to clear your session data.
+This project is configured for GitHub Pages.
 
-## Technologies
+1.  **Build the project**:
+    ```bash
+    npm run build
+    ```
 
--   [React](https://react.dev/)
--   [Tailwind CSS](https://tailwindcss.com/)
--   [Vite](https://vitejs.dev/)
--   [Lucide React](https://lucide.dev/) (Icons)
+2.  **Deploy to GitHub Pages**:
+    ```bash
+    npm run deploy
+    ```
+
+> [!TIP]
+> **SSH Agent Troubleshooting**: If your SSH key has a passphrase and deployment fails, run these commands first:
+> ```bash
+> eval $(ssh-agent -s)
+> ssh-add ~/.ssh/your_private_key
+> ```
+
+## 🧰 Tech Stack
+
+-   **React 19**
+-   **Vite**
+-   **Tailwind CSS**
+-   **Lucide React** (Icons)
+-   **gh-pages** (Deployment)

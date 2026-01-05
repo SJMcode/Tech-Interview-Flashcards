@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Code2, Palette, FileJson, Globe, Atom } from 'lucide-react';
+import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Code2, Palette, FileJson, Globe, Atom, MessageCircle } from 'lucide-react';
 
 const FlashcardApp = () => {
   const flashcards = {
@@ -410,6 +410,7 @@ const FlashcardApp = () => {
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
   const [showCode, setShowCode] = useState(false);
+  const [showDiscord, setShowDiscord] = useState(false);
   const [masteredCards, setMasteredCards] = useState<Record<string, boolean>>({});
 
   // @ts-ignore
@@ -675,6 +676,68 @@ const FlashcardApp = () => {
           </div>
 
         </div>
+      </div>
+
+      {/* Discord Widget */}
+      <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
+        {showDiscord && (
+          <div className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
+            <div className="p-3 bg-slate-800 border-b border-slate-700/50 flex justify-between items-center gap-4">
+              <div className="flex items-center gap-2">
+                <div className="w-2 h-2 bg-green-500 rounded-full" />
+                <span className="text-xs font-bold text-purple-300 tracking-wider">COMMUNITY CHAT</span>
+              </div>
+              <div className="flex items-center gap-3">
+                <a
+                  href="https://discord.gg/your-invite-link"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[10px] font-bold bg-indigo-600 hover:bg-indigo-500 text-white px-2 py-1 rounded transition-colors uppercase"
+                >
+                  Join Server
+                </a>
+                <button
+                  onClick={() => setShowDiscord(false)}
+                  className="text-slate-500 hover:text-white transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+            </div>
+            <iframe
+              src="https://e.widgetbot.io/channels/1362329821115584616/1362329821115584616"
+              width="350"
+              height="500"
+              allowTransparency={true}
+              frameBorder="0"
+              sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
+              className="bg-slate-900"
+            />
+          </div>
+        )}
+
+        <button
+          onClick={() => setShowDiscord(!showDiscord)}
+          className={`w-14 h-14 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group ${showDiscord
+            ? 'bg-red-500 hover:bg-red-600 rotate-90'
+            : 'bg-indigo-600 hover:bg-indigo-50 hover:shadow-indigo-500/20 hover:-translate-y-1'
+            }`}
+        >
+          {showDiscord ? (
+            <X className="text-white" size={24} />
+          ) : (
+            <>
+              <MessageCircle className="text-white group-hover:scale-110 transition-transform" size={28} />
+              <div className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 border-2 border-slate-900 rounded-full" />
+            </>
+          )}
+
+          {/* Tooltip */}
+          <div className="absolute right-full mr-4 px-3 py-1.5 bg-indigo-600 text-white text-xs font-bold rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none shadow-xl">
+            Join the Community
+            <div className="absolute top-1/2 -right-1 -translate-y-1/2 border-8 border-transparent border-l-indigo-600" />
+          </div>
+        </button>
       </div>
     </div>
   );

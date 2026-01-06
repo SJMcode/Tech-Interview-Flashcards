@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Code2, Palette, FileJson, Globe, Atom, MessageCircle } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ChevronLeft, ChevronRight, RotateCcw, Check, X, Code2, Palette, FileJson, Globe, Atom, MessageCircle, Menu } from 'lucide-react';
 
 const FlashcardApp = () => {
   const flashcards = {
@@ -597,6 +597,12 @@ const FlashcardApp = () => {
   const [showCode, setShowCode] = useState(false);
   const [showDiscord, setShowDiscord] = useState(false);
   const [masteredCards, setMasteredCards] = useState<Record<string, boolean>>({});
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+
+  // Close sidebar on route change (or category change) for mobile
+  useEffect(() => {
+    setIsSidebarOpen(false);
+  }, [activeSelection]);
 
   // @ts-ignore
   const currentCards = flashcards[activeSelection.main]?.[activeSelection.sub] || [];
@@ -659,44 +665,77 @@ const FlashcardApp = () => {
   };
 
   const getIcon = (category: string) => {
+    const iconClass = "w-4 h-4 md:w-[18px] md:h-[18px]";
     switch (category) {
-      case 'HTML': return <Code2 size={18} />;
-      case 'CSS': return <Palette size={18} />;
-      case 'JavaScript': return <FileJson size={18} />;
-      case 'Browser': return <Globe size={18} />;
-      case 'React': return <Atom size={18} />;
-      default: return <Code2 size={18} />;
+      case 'HTML': return <Code2 className={iconClass} />;
+      case 'CSS': return <Palette className={iconClass} />;
+      case 'JavaScript': return <FileJson className={iconClass} />;
+      case 'Browser': return <Globe className={iconClass} />;
+      case 'React': return <Atom className={iconClass} />;
+      default: return <Code2 className={iconClass} />;
     }
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex text-slate-100 font-sans">
+    <div className="min-h-[100dvh] bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex flex-col md:flex-row text-slate-100 font-sans relative overflow-x-hidden">
+      {/* Mobile Header */}
+      <div className="md:hidden flex items-center justify-between p-3.5 bg-slate-950/95 border-b border-slate-700/50 backdrop-blur-md sticky top-0 z-40">
+        <h2 className="text-base font-bold text-white flex items-center gap-2">
+          <Code2 className="text-purple-400 w-5 h-5 md:w-6 md:h-6" />
+          <span>Flashcards</span>
+        </h2>
+        <button
+          onClick={() => setIsSidebarOpen(true)}
+          className="p-1.5 text-slate-400 hover:text-white transition-colors bg-slate-900/40 rounded-lg border border-slate-800/50"
+          aria-label="Open Menu"
+        >
+          <Menu className="w-6 h-6" />
+        </button>
+      </div>
+
+      {/* Sidebar Overlay (Mobile only) */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-slate-950/95 backdrop-blur-md z-[60] md:hidden animate-in fade-in duration-300"
+          onClick={() => setIsSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className="w-72 bg-slate-950/50 border-r border-slate-700/50 flex flex-col shrink-0 backdrop-blur-sm">
-        <div className="p-6 border-b border-slate-800">
-          <h2 className="text-xl font-bold text-white tracking-tight flex items-center gap-2">
-            <Code2 className="text-purple-400" />
+      <aside className={`
+        fixed inset-y-0 left-0 z-[70] w-full sm:w-72 bg-slate-950 border-r border-slate-700/50 flex flex-col shrink-0 transition-transform duration-300 ease-in-out
+        md:relative md:translate-x-0 md:bg-slate-950/50 md:z-10 md:backdrop-blur-md md:w-72
+        ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}
+      `}>
+        <div className="p-5 border-b border-slate-800 flex items-center justify-between md:py-6">
+          <h2 className="text-lg font-bold text-white tracking-tight flex items-center gap-2 md:text-xl">
+            <Code2 className="text-purple-400 w-5 h-5 md:w-6 md:h-6" />
             Concepts
           </h2>
+          <button
+            onClick={() => setIsSidebarOpen(false)}
+            className="md:hidden p-2 text-slate-400 hover:text-white transition-colors hover:bg-slate-900 rounded-lg"
+          >
+            <X className="w-5 h-5" />
+          </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4 space-y-2">
+        <nav className="flex-1 overflow-y-auto p-4 space-y-2 md:p-4">
           {Object.entries(flashcards).map(([mainCategory, subCategories]) => (
             <div key={mainCategory} className="space-y-1">
               <button
                 onClick={() => toggleCategory(mainCategory)}
-                className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors hover:bg-slate-800/50 group ${expandedCategories[mainCategory] ? 'text-purple-300' : 'text-slate-400'
+                className={`w-full flex items-center justify-between px-2.5 py-2 rounded-lg transition-colors hover:bg-slate-800/50 group md:px-3 md:py-2.5 ${expandedCategories[mainCategory] ? 'text-purple-300' : 'text-slate-400'
                   }`}
               >
-                <div className="flex items-center gap-3 font-semibold text-sm">
+                <div className="flex items-center gap-2.5 font-semibold text-xs md:text-sm md:gap-3">
                   <div className={`transition-colors ${expandedCategories[mainCategory] ? 'text-purple-400' : 'text-slate-500 group-hover:text-slate-400'}`}>
                     {getIcon(mainCategory)}
                   </div>
                   {mainCategory}
                 </div>
                 <ChevronRight
-                  size={16}
-                  className={`transition-transform duration-200 ${expandedCategories[mainCategory] ? 'rotate-90' : ''}`}
+                  className={`w-4 h-4 transition-transform duration-200 ${expandedCategories[mainCategory] ? 'rotate-90' : ''}`}
                 />
               </button>
 
@@ -710,6 +749,7 @@ const FlashcardApp = () => {
                         setCurrentCardIndex(0);
                         setShowAnswer(false);
                         setShowCode(false);
+                        setIsSidebarOpen(false);
                       }}
                       className={`px-3 py-2 rounded-md text-sm font-medium text-left transition-all flex justify-between items-center group relative ${activeSelection.main === mainCategory && activeSelection.sub === sub
                         ? 'bg-purple-600/20 text-purple-300'
@@ -732,93 +772,105 @@ const FlashcardApp = () => {
               )}
             </div>
           ))}
-        </div>
-      </div>
+        </nav>
+      </aside>
 
       {/* Main Content */}
-      <div className="flex-1 p-8 overflow-y-auto">
-        <div className="max-w-4xl mx-auto">
+      <main className="flex-1 p-3.5 md:p-10 overflow-x-hidden overflow-y-auto w-full">
+        <div className="max-w-4xl mx-auto w-full">
           {/* Header */}
-          <div className="text-center mb-12">
-            <h1 className="text-4xl font-bold text-white mb-2">Tech Interview Flashcards</h1>
-            <p className="text-purple-300">Active recall for concepts that actually stick</p>
-          </div>
+          <header className="text-center mb-10 md:mb-16">
+            <h1 className="text-3xl md:text-5xl font-extrabold text-white mb-3 tracking-tight">Tech Interview Flashcards</h1>
+            <p className="text-purple-300 text-sm md:text-lg font-medium opacity-80">Active recall for concepts that actually stick</p>
+          </header>
 
           {/* Breadcrumbs */}
-          <div className="text-center mb-2 text-sm text-slate-400 font-medium">
-            <span className="text-slate-500">{activeSelection.main}</span>
-            <ChevronRight className="inline mx-1 w-3 h-3" />
-            <span className="text-purple-300">{activeSelection.sub}</span>
-          </div>
+          <nav className="flex items-center justify-center gap-2 mb-4 text-xs md:text-sm text-slate-400 font-semibold uppercase tracking-widest overflow-hidden">
+            <span className="text-slate-500 truncate max-w-[100px] md:max-w-none">{activeSelection.main}</span>
+            <ChevronRight className="w-3 h-3 text-slate-600 shrink-0" />
+            <span className="text-purple-400 truncate max-w-[150px] md:max-w-none">{activeSelection.sub}</span>
+          </nav>
 
-          {/* Progress */}
-          <div className="mb-6 text-center text-slate-500 text-xs tracking-widest uppercase">
-            Card {currentCardIndex + 1} of {currentCards.length}
+          {/* Progress Indicator */}
+          <div className="mb-8">
+            <div className="flex justify-between items-end mb-2 text-[10px] md:text-xs font-bold text-slate-500 tracking-tighter uppercase opacity-60">
+              <span>Card {currentCardIndex + 1} / {currentCards.length}</span>
+              <span>{Math.round(((currentCardIndex + 1) / currentCards.length) * 100)}% Complete</span>
+            </div>
+            <div className="h-1.5 w-full bg-slate-800 rounded-full overflow-hidden border border-slate-700/30">
+              <div
+                className="h-full bg-gradient-to-r from-purple-600 to-indigo-500 transition-all duration-500 ease-out"
+                style={{ width: `${((currentCardIndex + 1) / currentCards.length) * 100}%` }}
+              />
+            </div>
           </div>
 
           {/* Flashcard */}
-          <div
-            className="bg-slate-800/80 backdrop-blur border border-slate-700 rounded-2xl shadow-2xl p-10 min-h-[400px] mb-8 cursor-pointer relative overflow-hidden group transition-all hover:bg-slate-800"
+          <article
+            className="bg-slate-800/60 backdrop-blur-xl border border-slate-700/50 rounded-[1.5rem] md:rounded-[2.5rem] shadow-2xl p-5 md:p-16 min-h-[300px] md:min-h-[480px] mb-8 md:mb-12 cursor-pointer relative overflow-hidden group transition-all duration-500 hover:bg-slate-800/80 hover:border-purple-500/30 flex flex-col justify-center"
             onClick={() => setShowAnswer(!showAnswer)}
           >
             {/* Status indicator */}
             {getCurrentCardStatus() !== undefined && (
-              <div className="absolute top-6 right-6">
+              <div className="absolute top-6 right-6 md:top-10 md:right-10 animate-in zoom-in duration-300">
                 {getCurrentCardStatus() ? (
-                  <div className="bg-green-500/10 p-2 rounded-full border border-green-500/20">
-                    <Check className="text-green-400" size={20} />
+                  <div className="bg-green-500/20 p-2 md:p-3 rounded-2xl border border-green-500/30">
+                    <Check className="text-green-400 w-5 h-5 md:w-6 md:h-6" />
                   </div>
                 ) : (
-                  <div className="bg-red-500/10 p-2 rounded-full border border-red-500/20">
-                    <X className="text-red-400" size={20} />
+                  <div className="bg-red-500/20 p-2 md:p-3 rounded-2xl border border-red-500/30">
+                    <X className="text-red-400 w-5 h-5 md:w-6 md:h-6" />
                   </div>
                 )}
               </div>
             )}
 
-            <div className="text-xs font-bold tracking-widest text-purple-400 mb-6 uppercase">
-              {showAnswer ? 'Answer' : 'Question'}
+            <div className="text-[10px] md:text-xs font-black tracking-[0.2em] text-purple-400/80 mb-6 md:mb-10 uppercase">
+              {showAnswer ? 'The Answer' : 'The Question'}
             </div>
 
-            <div className="text-white text-xl leading-relaxed whitespace-pre-wrap font-light">
-              {showAnswer ? currentCard.a : currentCard.q}
+            <div className={`text-white text-xl md:text-3xl leading-snug font-medium transition-all duration-300 ${showAnswer ? 'opacity-100' : 'opacity-100'}`}>
+              <p className="whitespace-pre-wrap">{showAnswer ? currentCard.a : currentCard.q}</p>
             </div>
 
             {showAnswer && currentCard.code && (
-              <div className="mt-4 border-t border-slate-700/50 pt-4" onClick={e => e.stopPropagation()}>
+              <div className="mt-8 border-t border-slate-700/50 pt-8" onClick={e => e.stopPropagation()}>
                 <button
                   onClick={() => setShowCode(!showCode)}
-                  className="text-xs font-bold text-purple-400 flex items-center gap-1 hover:text-purple-300 transition-colors"
+                  className="text-xs font-bold text-purple-400 flex items-center gap-2 hover:text-purple-300 transition-colors bg-purple-500/5 px-3 py-1.5 rounded-full border border-purple-500/10"
                 >
-                  <Code2 size={12} />
-                  {showCode ? 'Hide Code' : 'Show Code Example'}
+                  <Code2 className="w-4 h-4" />
+                  <span>{showCode ? 'Hide Implementation' : 'View Code Example'}</span>
                 </button>
                 {showCode && (
-                  <pre className="mt-2 bg-slate-900/80 p-4 rounded-lg text-xs font-mono text-slate-300 overflow-x-auto border border-slate-700/50 shadow-inner">
-                    <code>{currentCard.code}</code>
-                  </pre>
+                  <div className="mt-4 animate-in slide-in-from-top-2 duration-300">
+                    <pre className="bg-slate-950/80 p-4 md:p-6 rounded-2xl text-[11px] md:text-sm font-mono text-slate-300 overflow-x-auto border border-slate-700/50 shadow-inner max-h-[250px] md:max-h-none custom-scrollbar">
+                      <code className="block w-full">{currentCard.code}</code>
+                    </pre>
+                  </div>
                 )}
               </div>
             )}
 
-            <div className="absolute bottom-6 right-6 text-slate-600 text-xs flex items-center gap-1 group-hover:text-purple-400 transition-colors">
-              Click to flip <RotateCcw size={12} />
+            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 md:bottom-10 text-slate-500 text-[10px] md:text-xs font-bold tracking-widest flex items-center gap-2 group-hover:text-purple-400/60 transition-colors uppercase opacity-40">
+              <RotateCcw className="w-3 h-3" /> Flip to {showAnswer ? 'Question' : 'Answer'}
             </div>
-          </div>
+          </article>
 
           {/* Controls */}
-          <div className="flex gap-6 items-center justify-center mb-8">
+          <div className="flex gap-4 md:gap-8 items-center justify-center mb-10">
             <button
               onClick={prevCard}
               disabled={currentCardIndex === 0}
-              className="p-4 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:opacity-30 rounded-xl text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="p-4 md:p-5 bg-slate-800/50 hover:bg-slate-700 disabled:bg-slate-950 disabled:opacity-20 rounded-2xl text-white transition-all shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 border border-slate-700/50"
+              aria-label="Previous Card"
             >
-              <ChevronLeft size={24} />
+              <ChevronLeft className="w-6 h-6 md:w-8 md:h-8" />
             </button>
 
             <button
               onClick={() => setShowAnswer(!showAnswer)}
-              className="px-8 py-4 bg-purple-600 hover:bg-purple-500 rounded-xl text-white font-bold tracking-wide transition-all shadow-lg shadow-purple-900/50 hover:shadow-purple-700/50 hover:-translate-y-0.5 min-w-[160px]"
+              className="px-8 py-4 md:px-12 md:py-5 bg-purple-600 hover:bg-purple-500 rounded-2xl text-white font-black tracking-widest transition-all shadow-2xl shadow-purple-900/40 hover:shadow-purple-700/40 hover:-translate-y-1 min-w-[140px] md:min-w-[200px] text-sm md:text-lg uppercase"
             >
               {showAnswer ? 'Hide' : 'Reveal'}
             </button>
@@ -826,33 +878,34 @@ const FlashcardApp = () => {
             <button
               onClick={nextCard}
               disabled={currentCardIndex === currentCards.length - 1}
-              className="p-4 bg-slate-800 hover:bg-slate-700 disabled:bg-slate-900 disabled:opacity-30 rounded-xl text-white transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5"
+              className="p-4 md:p-5 bg-slate-800/50 hover:bg-slate-700 disabled:bg-slate-950 disabled:opacity-20 rounded-2xl text-white transition-all shadow-xl hover:shadow-purple-500/10 hover:-translate-y-1 border border-slate-700/50"
+              aria-label="Next Card"
             >
-              <ChevronRight size={24} />
+              <ChevronRight className="w-6 h-6 md:w-8 md:h-8" />
             </button>
           </div>
 
           {/* Mastery buttons */}
-          <div className={`flex gap-4 justify-center transition-all duration-500 overflow-hidden ${showAnswer ? 'opacity-100 max-h-20' : 'opacity-0 max-h-0'}`}>
+          <div className={`grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-6 justify-center transition-all duration-700 ease-in-out ${showAnswer ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4 pointer-events-none'}`}>
             <button
               onClick={(e) => { e.stopPropagation(); markMastered(false); }}
-              className="px-6 py-2.5 bg-slate-800 border border-red-500/30 hover:bg-red-950/30 hover:border-red-500 text-red-200 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
+              className="group px-6 py-4 bg-slate-900/50 border border-red-500/20 hover:bg-red-500/10 hover:border-red-500/50 text-red-300 rounded-2xl text-sm md:text-base font-bold transition-all flex items-center justify-center gap-3 backdrop-blur-sm"
             >
-              <X size={16} />
-              Need Practice
+              <X className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span>Need Practice</span>
             </button>
             <button
               onClick={(e) => { e.stopPropagation(); markMastered(true); }}
-              className="px-6 py-2.5 bg-slate-800 border border-green-500/30 hover:bg-green-950/30 hover:border-green-500 text-green-200 rounded-lg text-sm font-medium transition-all flex items-center gap-2"
+              className="group px-6 py-4 bg-slate-900/50 border border-green-500/20 hover:bg-green-500/10 hover:border-green-500/50 text-green-300 rounded-2xl text-sm md:text-base font-bold transition-all flex items-center justify-center gap-3 backdrop-blur-sm"
             >
-              <Check size={16} />
-              Got It
+              <Check className="w-5 h-5 group-hover:scale-110 transition-transform" />
+              <span>Mastered It</span>
             </button>
           </div>
 
           {/* Tips */}
-          <div className="mt-12 border-t border-slate-800 pt-8">
-            <div className="bg-slate-800/50 rounded-xl p-6 text-slate-400 text-sm leading-relaxed max-w-2xl mx-auto">
+          <div className="mt-8 md:mt-12 border-t border-slate-800 pt-6 md:pt-8">
+            <div className="bg-slate-800/50 rounded-xl p-4 md:p-6 text-slate-400 text-xs md:text-sm leading-relaxed max-w-2xl mx-auto">
               <p className="flex gap-2 items-start">
                 <span className="text-purple-400 font-bold shrink-0">💡 Pro Tip:</span>
                 Focus on 'Why' and 'How' rather than just memorizing syntax. Interviewers look for deep understanding of concepts like the Event Loop or Closures.
@@ -861,10 +914,10 @@ const FlashcardApp = () => {
           </div>
 
         </div>
-      </div>
+      </main>
 
       {/* Discord Widget */}
-      <div className="fixed bottom-8 right-8 z-50 flex flex-col items-end gap-4">
+      <div className="fixed bottom-4 right-4 md:bottom-8 md:right-8 z-50 flex flex-col items-end gap-3 md:gap-4">
         {showDiscord && (
           <div className="bg-slate-900 border border-slate-700/50 rounded-2xl shadow-2xl overflow-hidden animate-in fade-in slide-in-from-bottom-4 duration-300">
             <div className="p-3 bg-slate-800 border-b border-slate-700/50 flex justify-between items-center gap-4">
@@ -891,12 +944,12 @@ const FlashcardApp = () => {
             </div>
             <iframe
               src="https://e.widgetbot.io/channels/1362329821115584616/1362329821115584616"
-              width="350"
-              height="500"
+              width="300"
+              height="450"
               allowTransparency={true}
               frameBorder="0"
               sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts"
-              className="bg-slate-900"
+              className="bg-slate-900 md:w-[350px] md:h-[500px]"
             />
           </div>
         )}
@@ -924,7 +977,7 @@ const FlashcardApp = () => {
           </div>
         </button>
       </div>
-    </div>
+    </div >
   );
 };
 

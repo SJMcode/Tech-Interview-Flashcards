@@ -161,6 +161,34 @@ const FlashcardApp = () => {
           a: "- Use semantic HTML.\n- Lazy load images (loading='lazy').\n- Defer scripts (<script defer>).\n- Minimize DOM depth.\n- Preload critical assets.",
           code: "<img src=\"heavy.jpg\" loading=\"lazy\" alt=\"...\" />\n<script src=\"app.js\" defer></script>\n<link rel=\"preload\" href=\"font.woff2\" as=\"font\" />"
         }
+      ],
+      "HTML Structure & Metadata (Practice)": [
+        {
+          q: "Practice: Building a Basic HTML5 Page Boilerplate",
+          a: "Every HTML5 document should start with a correct boilerplate. \n\nGoal:\n1. Include the DOCTYPE declaration.\n2. Set the language to English.\n3. Add meta tags for charset, viewport, and a description.\n4. Set a document title.",
+          code: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <meta name=\"description\" content=\"Practice Page\">\n  <title>HTML5 Boilerplate</title>\n</head>\n<body>\n  <!-- Content goes here -->\n</body>\n</html>"
+        }
+      ],
+      "Semantic Layout & Accessibility (Practice)": [
+        {
+          q: "Practice: Creating a Semantic Blog Post Layout",
+          a: "Semantic HTML improves accessibility and SEO. \n\nGoal:\n1. Use <header> for the site title.\n2. Use <main> for the primary content area.\n3. Wrap the post in an <article>.\n4. Use <aside> for a sidebar and <footer> for copyright info.\n5. Add alt text to an image.",
+          code: "<header>\n  <h1>My Awesome Blog</h1>\n</header>\n<main>\n  <article>\n    <h2>Semantic HTML is Great</h2>\n    <p>Post content...</p>\n    <img src=\"semantic.jpg\" alt=\"Diagram of semantic elements\" />\n  </article>\n  <aside>\n    <h3>Related Posts</h3>\n  </aside>\n</main>\n<footer>\n  <p>&copy; 2024 My Blog</p>\n</footer>"
+        }
+      ],
+      "Forms & Validation (Practice)": [
+        {
+          q: "Practice: Building a Validated Contact Form",
+          a: "Forms are essential for user interaction. \n\nGoal:\n1. Use <form> with action and method.\n2. Add <label> for each input.\n3. Use 'required' for name and email.\n4. Use 'type=\"email\"' for email validation.\n5. Use 'pattern' for a simple zip code validation.\n6. Add a <textarea> and a submit <button>.",
+          code: "<form action=\"/submit\" method=\"POST\">\n  <label for=\"name\">Name:</label>\n  <input type=\"text\" id=\"name\" name=\"name\" required>\n\n  <label for=\"email\">Email:</label>\n  <input type=\"email\" id=\"email\" name=\"email\" required>\n\n  <label for=\"zip\">Zip (5 digits):</label>\n  <input type=\"text\" id=\"zip\" name=\"zip\" pattern=\"\\d{5}\">\n\n  <label for=\"msg\">Message:</label>\n  <textarea id=\"msg\" name=\"msg\"></textarea>\n\n  <button type=\"submit\">Send</button>\n</form>"
+        }
+      ],
+      "Tables & Data (Practice)": [
+        {
+          q: "Practice: Creating a Complex Data Table",
+          a: "Tables organize structured data. \n\nGoal:\n1. Use <thead> and <tbody>.\n2. Use <th> for headers.\n3. Merge 2 columns horizontally using 'colspan'.\n4. Merge 2 rows vertically using 'rowspan'.",
+          code: "<table>\n  <thead>\n    <tr>\n      <th>Category</th>\n      <th colspan=\"2\">Statistics</th>\n    </tr>\n  </thead>\n  <tbody>\n    <tr>\n      <td rowspan=\"2\">Users</td>\n      <td>Active</td>\n      <td>1000</td>\n    </tr>\n    <tr>\n      <td>Inactive</td>\n      <td>200</td>\n    </tr>\n  </tbody>\n</table>"
+        }
       ]
     },
     CSS: {
@@ -347,21 +375,178 @@ const FlashcardApp = () => {
           a: "Nesting, Variables, Mixins, Modules.",
           code: "$primary: blue;\n\n.card {\n  color: $primary;\n  &:hover {\n    color: darkblue;\n  }\n}"
         }
+      ],
+      "Classes (Practice)": [
+        {
+          q: "CSS Class Practice: Styling Sports and Computing History",
+          a: "Every HTML element can be assigned a class identifier. This is done by including a class attribute and its associated value in the element's opening tag. Elements that are conceptually grouped in some way can be given the same class attribute value. They should also be given a meaningful name that describes what the element grouping is being used for. We can use CSS to target class attributes and apply a collective style to those elements.\n\nIn this challenge, you will:\n1. Add a class attribute to the first two <h3> elements and give each of them the attribute value of sports-history\n2. Add a class attribute to the second two <h3> elements and give each of them the attribute value of computing-history\n3. Create a style rule beneath the existing id rules that has a corresponding class selector name of sports-history. This will target our sports content\n4. Within that rule, add a declaration that sets the color property to orange\n5. Create another style rule has a corresponding class selector name of computing-history. This will target our programming content\n6. Within that rule add a declaration that sets the color property to green",
+          code: "<!DOCTYPE html>\n<html>\n  <head>\n    <meta charset=\"utf-8\">\n    <meta name=\"viewport\" content=\"width=device-width\">\n    <title>Lesson 2 Challenge 4</title>\n    <style>\n    \t#heading{\n    \t  font-family: Arial;\n    \t  background-color: red;\n    \t  color: white;\n    \t}\n      \n        #uppercase {\n          text-transform: uppercase;\n        }\n    \t/* Add your class rules here */\n    \t.sports-history{\n    \t    color:orange;\n    \t}\n    \t.computing-history{\n    \t    color:green;\n    \t}\n    </style>\n  </head>\n  <body>\n    <div id=\"heading\">\n     <h1> Sporting History</h1>\n     <p id=\"uppercase\">\n       Giants & Heroes\n     </p>\n    </div>\n    <h3 class=\"sports-history\"> Track & Field</h3>\n    <p>\n      Some sporting feats ridicule expectations, fewer violate logic but the rarest of all added a defying of gravity to a hat-trick of achievements. At 3.45pm on 18 October 1968 in Mexico City’s Estadio Olímpico Universitario Bob Beamon accomplished all three.\n    </p>\n   \t<h3 class=\"sports-history\">Rugby</h3>\n    <p>\n      With the game locked at 10 - 10 with thirty minutes on the clock, a Munster scrum just outside the Biarritz line enabled Peter Stringer to do the unexpected and break on the blindside for an unforgettable try. A moment of sheer brilliance by the Munster and Ireland scrumhalf. The try proved to be crucial as Munster won by 23 - 19 to lift the European Cup in Cardiff.\n    </p>\n    <h3 class=\"computing-history\">The first Programmer</h3>\n    <p>\n      Ada Lovelace was an English mathematician and writer, chiefly known for her work on Charles Babbage's proposed mechanical general-purpose computer, the Analytical Engine. She was the first to recognise that the machine had applications beyond pure calculation, and published the first algorithm intended to be carried out by such a machine. As a result, she is sometimes regarded as the first to recognise the full potential of a \"computing machine\" and the first computer programmer.\n    </p>\n    <h3 class=\"computing-history\">The first Compiler</h3>\n    <p>\n      Grace Hopper was an American computer scientist and United States Navy rear admiral. One of the first programmers of the Harvard Mark I computer, she was a pioneer of computer programming who invented one of the first compiler related tools.\n    </p>\n  </body>\n</html>"
+        }
+      ],
+      "Box Model & Spacing (Practice)": [
+        {
+          q: "Practice: Building a Card with Custom Box Model",
+          a: "The Box Model consists of content, padding, border, and margin. \n\nGoal:\n1. Create a card with 20px padding.\n2. Add a 5px solid border.\n3. Add 15px margin to separate it from others.\n4. Use box-sizing: border-box to ensure the total width includes padding and border.",
+          code: ".card {\n  width: 300px;\n  padding: 20px;\n  border: 5px solid #333;\n  margin: 15px;\n  box-sizing: border-box;\n  background: #f9f9f9;\n}"
+        }
+      ],
+      "Selectors & Specificity (Practice)": [
+        {
+          q: "Practice: Targeting Nested Elements",
+          a: "Selectors allow us to target specific elements using combinations. \n\nGoal:\n1. Target only direct 'p' children of a 'div' using the child combinator (>).\n2. Target a 'p' that is an adjacent sibling of an 'h1' using (+).\n3. Understand that an ID selector (#id) has higher specificity than a class selector (.class).",
+          code: "/* Direct child */\ndiv > p {\n  color: blue;\n}\n\n/* Adjacent sibling */\nh1 + p {\n  font-weight: bold;\n}\n\n/* Specificity Example */\n#main-title { color: red; } /* Wins */\n.title { color: blue; }     /* Loses */"
+        }
+      ],
+      "Flexbox Layout (Practice)": [
+        {
+          q: "Practice: Centering and Aligning with Flexbox",
+          a: "Flexbox is ideal for 1D layouts and centering. \n\nGoal:\n1. Center a child both horizontally and vertically.\n2. Create a navigation bar with space-between items.",
+          code: "/* Centering */\n.center-container {\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  height: 200px;\n}\n\n/* Navbar */\n.nav {\n  display: flex;\n  justify-content: space-between;\n  padding: 1rem;\n}"
+        }
+      ],
+      "Grid Layout (Practice)": [
+        {
+          q: "Practice: Creating a 3-Column Responsive Grid",
+          a: "CSS Grid is powerful for 2D layouts. \n\nGoal:\n1. Create a grid with 3 equal columns.\n2. Use 'gap' for spacing.\n3. Use 'repeat(auto-fit, minmax(...))' for basic responsiveness.",
+          code: ".grid-container {\n  display: grid;\n  grid-template-columns: repeat(3, 1fr);\n  gap: 20px;\n}\n\n/* Responsive version */\n.responsive-grid {\n  display: grid;\n  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));\n  gap: 1rem;\n}"
+        }
+      ],
+      "Position & Layering (Practice)": [
+        {
+          q: "Practice: Creating an Overlay and Sticky Header",
+          a: "Positioning controls where elements sit in the document flow. \n\nGoal:\n1. Create a sticky header that stays at the top.\n2. Create an absolute-positioned badge inside a relative-positioned card.\n3. Use z-index to manage layering.",
+          code: ".header {\n  position: sticky;\n  top: 0;\n  z-index: 100;\n}\n\n.card {\n  position: relative;\n}\n\n.badge {\n  position: absolute;\n  top: -10px;\n  right: -10px;\n}"
+        }
+      ],
+      "Animations & Effects (Practice)": [
+        {
+          q: "Practice: Hover Transitions and Keyframe Animations",
+          a: "Animations bring life to the UI. \n\nGoal:\n1. Add a smooth scale transition on hover.\n2. Create a 'fade-in' keyframe animation.",
+          code: "/* Transition */\n.btn {\n  transition: transform 0.2s ease;\n}\n.btn:hover {\n  transform: scale(1.1);\n}\n\n/* Animation */\n@keyframes fadeIn {\n  from { opacity: 0; }\n  to { opacity: 1; }\n}\n.popup {\n  animation: fadeIn 0.5s ease-in-out;\n}"
+        }
+      ],
+      "Responsive Design & Units (Practice)": [
+        {
+          q: "Practice: Fluid Typography and Mobile First",
+          a: "Modern responsive design uses fluid units and media queries. \n\nGoal:\n1. Use 'rem' for accessibility.\n2. Use 'clamp()' for fluid font sizes.\n3. Apply mobile-first media queries.",
+          code: "body {\n  font-size: 1rem; /* Base 16px */\n}\n\nh1 {\n  font-size: clamp(1.5rem, 5vw, 3rem);\n}\n\n/* Desktop override */\n@media (min-width: 1024px) {\n  .container {\n    max-width: 1200px;\n    margin: 0 auto;\n  }\n}"
+        }
       ]
     },
     JavaScript: {
-      "Core Concepts": [
+      "Fundamentals": [
+        {
+          q: "What are the JavaScript Data Types?",
+          a: "Primitives: string, number, boolean, undefined, null, symbol, bigint.\nReference: objects (including arrays, functions).",
+          code: "let str = 'hello'; // Primitive\nlet obj = { a: 1 }; // Reference\nlet arr = [1, 2];   // Reference"
+        },
+        {
+          q: "Explain Global, Function, and Block scope.",
+          a: "Global: Accessible everywhere.\nFunction: Accessible only within the function.\nBlock: Accessible only within { } (let/const only).",
+          code: "let globalVar = 'I am global';\n\nfunction test() {\n  let funcVar = 'I am function';\n  if (true) {\n    let blockVar = 'I am block';\n  }\n}"
+        },
+        {
+          q: "What is Hoisting?",
+          a: "The behavior of moving declarations to the top of their scope during compilation. 'var' is hoisted and initialized as 'undefined'. Functions are fully hoisted. 'let' and 'const' are hoisted but not initialized (TDZ).",
+          code: "console.log(x); // undefined\nvar x = 5;\n\nhello(); // works\nfunction hello() { console.log('hi'); }"
+        },
+        {
+          q: "What is the Temporal Dead Zone (TDZ)?",
+          a: "The period between a variable's creation and its initialization where accessing it throws a ReferenceError. Applies to 'let' and 'const'.",
+          code: "{\n  // TDZ starts\n  console.log(a); // ReferenceError\n  let a = 10; // TDZ ends\n}"
+        }
+      ],
+      "Functions & Objects": [
+        {
+          q: "How does 'this' work in JavaScript?",
+          a: "Value depends on how a function is called:\n1. Global: window/undefined (strict).\n2. Method: The object.\n3. Constructor (new): The new instance.\n4. Arrow: Inherits from lexical scope.\n5. Explicit: Bind, Call, Apply.",
+          code: "const obj = {\n  fn: function() { console.log(this); }\n};\nobj.fn(); // this is obj\n\nconst arrowFn = () => console.log(this);\n// this is lexical scope"
+        },
+        {
+          q: "call(), apply(), and bind()",
+          a: "Call: Invokes function immediately with arguments list.\nApply: Invokes function immediately with arguments array.\nBind: Returns a new function with fixed 'this'.",
+          code: "fn.call(obj, arg1, arg2);\nfn.apply(obj, [arg1, arg2]);\nconst bound = fn.bind(obj);"
+        },
         {
           q: "What is a closure?",
-          a: "A closure is when a function 'remembers' variables from its outer scope, even after that outer function has finished executing.\n\nExample:\nfunction outer() {\n  let count = 0;\n  return function inner() {\n    count++;\n    return count;\n  }\n}\n"
+          a: "A closure is when a function 'remembers' variables from its outer scope, even after that outer function has finished executing.",
+          code: "function outer() {\n  let count = 0;\n  return function inner() {\n    count++;\n    return count;\n  }\n}\nconst counter = outer();"
         },
         {
-          q: "Event loop basics",
-          a: "1. Call Stack (Sync code)\n2. Microtasks (Promises)\n3. Macrotasks (setTimeout)\n\nThe loop waits for Stack to be empty, then runs all Microtasks, then runs ONE Macrotask."
+          q: "Explain Prototypal Inheritance.",
+          a: "Objects in JS have a link to a prototype object. If a property isn't found, JS looks up the 'prototype chain' until it finds it or reaches null.",
+          code: "const animal = { eats: true };\nconst rabbit = Object.create(animal);\nconsole.log(rabbit.eats); // true (inherited)"
         },
         {
-          q: "== vs ===",
-          a: "== (Loose Equality): Performs type coercion (e.g., '5' == 5 is true).\n=== (Strict Equality): Checks value AND type (e.g., '5' === 5 is false).\n\nAlways use === to avoid bugs."
+          q: "Higher-Order Functions",
+          a: "Functions that take one or more functions as arguments or return a function as their result.",
+          code: "const multiply = (a) => (b) => a * b;\nconst double = multiply(2);\nconsole.log(double(10)); // 20"
+        }
+      ],
+      "Advanced Patterns": [
+        {
+          q: "Explain Memoization.",
+          a: "An optimization technique used to speed up programs by storing the results of expensive function calls and returning the cached result when the same inputs occur again.",
+          code: "const memoize = (fn) => {\n  const cache = {};\n  return (...args) => {\n    const key = JSON.stringify(args);\n    return cache[key] || (cache[key] = fn(...args));\n  };\n};"
+        },
+        {
+          q: "What is Currying?",
+          a: "A technique of evaluating function with multiple arguments, into sequence of functions with single argument.",
+          code: "const curry = (f) => (a) => (b) => f(a, b);"
+        },
+        {
+          q: "Debouncing and Throttling",
+          a: "Debounce: Executes function after a period of inactivity.\nThrottle: Executes function at most once every specified interval.",
+          code: "// Debounce\nsetTimeout(() => fn(), delay);\n// Throttle\nif (!waiting) { fn(); waiting = true; }"
+        },
+        {
+          q: "Garbage Collection in JS",
+          a: "Memory is allocated when objects are created and 'automatically' freed when they are no longer needed (Mark-and-Sweep algorithm).",
+          code: "let obj = { name: 'test' };\nobj = null; // Eligible for GC"
+        }
+      ],
+      "Asynchronous JS": [
+        {
+          q: "What is a Promise?",
+          a: "An object representing the eventual completion or failure of an asynchronous operation. States: Pending, Fulfilled, Rejected.",
+          code: "const promise = new Promise((resolve, reject) => {\n  setTimeout(() => resolve('Done!'), 1000);\n});"
+        },
+        {
+          q: "Async/Await",
+          a: "Syntactic sugar for Promises, making asynchronous code look and behave like synchronous code.",
+          code: "async function fetchData() {\n  const res = await fetch(url);\n  const data = await res.json();\n}"
+        },
+        {
+          q: "Event Loop: Microtasks vs Macrotasks",
+          a: "Microtasks (Promises, process.nextTick) have higher priority than Macrotasks (setTimeout, setInterval). The loop runs all microtasks before the next macrotask.",
+          code: "setTimeout(() => console.log('Macro'), 0);\nPromise.resolve().then(() => console.log('Micro'));\n// Micro, then Macro"
+        },
+        {
+          q: "What is Fetch API?",
+          a: "Modern replacement for XMLHttpRequest. Returns a Promise that resolves to the Response object.",
+          code: "fetch('https://api.example.com/data')\n  .then(response => response.json())\n  .then(data => console.log(data));"
+        }
+      ],
+      "Modern ES6+": [
+        {
+          q: "Destructuring (Array & Object)",
+          a: "A syntax that allows unpacking values from arrays or properties from objects into distinct variables.",
+          code: "const { name, age } = user;\nconst [first, second] = colors;"
+        },
+        {
+          q: "Spread and Rest Operators",
+          a: "Spread (...) expands elements. Rest (...) collects elements into an array.",
+          code: "const arr = [...oldArr, 1, 2]; // Spread\nfunction sum(...args) { } // Rest"
+        },
+        {
+          q: "ES Modules (Import/Export)",
+          a: "The standard for modularizing JavaScript. Allows sharing code between files.",
+          code: "// file.js\nexport const x = 1;\n// app.js\nimport { x } from './file.js';"
+        },
+        {
+          q: "JavaScript Classes",
+          a: "Syntactic sugar over prototypal inheritance. Provide a cleaner way to create objects and handle inheritance.",
+          code: "class Animal {\n  constructor(name) { this.name = name; }\n  speak() { console.log('hi'); }\n}\nclass Dog extends Animal { }"
         }
       ]
     },
@@ -399,7 +584,7 @@ const FlashcardApp = () => {
 
   const [activeSelection, setActiveSelection] = useState({
     main: "JavaScript",
-    sub: "Core Concepts"
+    sub: "Fundamentals"
   });
 
   // State for expanded categories in sidebar
